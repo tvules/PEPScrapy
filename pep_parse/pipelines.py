@@ -1,4 +1,5 @@
 import csv
+from collections import defaultdict
 from datetime import datetime
 
 from itemadapter import ItemAdapter
@@ -16,7 +17,7 @@ class PepParsePipeline:
 
     def open_spider(self, spider: Spider) -> None:
         self.stats = spider.crawler.stats
-        self.statuses = {}
+        self.statuses = defaultdict(int)
 
     def process_item(self, item: Item, spider: Spider) -> Item:
         adapter = ItemAdapter(item)
@@ -26,7 +27,7 @@ class PepParsePipeline:
                     f"Отсутствует значение ключа `{key}`: item={item}"
                 )
         status = adapter.get("status")
-        self.statuses[status] = self.statuses.get(status, 0) + 1
+        self.statuses[status] += 1
         return item
 
     def close_spider(self, spider: Spider) -> None:
